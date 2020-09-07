@@ -1,25 +1,23 @@
-deck = list(range(1,13))*8
-
 import random
 import copy
 
+
 def getAllSets(hand):
+    '''get all sets in a hand'''
     allSets = []
     for num in set(hand):
         if hand.count(num) >= 2:
             allSets.append([num]*hand.count(num))
-#             print(num, hand.count(num))
-    print(allSets, 'all sets')
     return allSets
 
 
 def getAllRuns(hand):
+    '''get all possible runs in a hand'''
     allRuns = []
     newRun=True
     run=[]
     hand=set(hand)
     for i in range(1,13):
-#         print(i,newRun)
         if newRun and i in hand:
             run=[i]
             newRun=False
@@ -34,55 +32,38 @@ def getAllRuns(hand):
     else:
         if len(run)>=2:
             allRuns.append(run)  
-    print(allRuns)
     return allRuns
 
 
 def getPossRuns(runs, length):
+    '''get all possible runs of the specified length'''
     possRuns = []
     for run in runs:
         i = 0
         while length + i <= len(run):
             possRuns.append(run[i:length+i])
-#             print(run[i:length+i])
             i+=1
-#     print(possRuns)
     return possRuns
 
-phases = {
-    #Set 1, Set 2, Run
-    1: [3,3,0],
-    2: [3,0,4],
-    3: [4,0,4],
-    4: [0,0,7],
-    5: [0,0,8],
-    6: [0,0,9],
-    7: [4,4,0],
-    #8
-    9: [5,2,0],
-    10:[5,3,0]
-}
 
-def checkPhase(phase):
+def checkPhase(phase, allSets, allRuns):
+    '''Check if the sets and runs complete the phase'''
     hasSet1, hasSet2, hasRun = False, False, False
     set1,set2,run = phases[phase]
-#     print(set1,set2,run)
     currentSets = copy.deepcopy(allSets)
-#     print('currentset',currentSets)
     if set1 == 0:
         hasSet1 = True
     else:
+        k = [s[0] for s in currentSets if len(s)==set1]
         for _set in currentSets:
             if len(_set) >= set1:
                 hasSet1 = True
                 for _ in range(set1):
                     _set.pop()
                 break
-#                 currentSets.remove(_set)
     if set2 == 0:
         hasSet2 = True
     else:
-#         print("sets",currentSets)
         for _set in currentSets:
             if len(_set) >= set2:
                 hasSet2 = True
@@ -94,20 +75,47 @@ def checkPhase(phase):
         hasRun = True
     else:
         for _run in getPossRuns(allRuns, run):
-            if len(_run) >= run:
-                hasRun = True
-                break
-#     print(hasSet1,hasSet2,hasRun)
+            if k:
+                if len(_run) >= run and not all(s in _run for s in k):
+                    hasRun = True
+                    break
+            else:
+                if len(_run) >= run:
+                    hasRun = True
+                    break
     return hasSet1 and hasSet2 and hasRun
 
+
+# How many cards needed in each of the phases
+# first set, Set 2, Run
+# 0 means it's not needed
+phases = {
+    1: [3,3,0],
+    2: [3,0,4],
+    3: [4,0,4],
+    4: [0,0,7],
+    5: [0,0,8],
+    6: [0,0,9],
+    7: [4,4,0],
+    #8 Skip phase 8
+    9: [5,2,0],
+    10:[5,3,0]
+}
+
+def checkAllPhases(hand):
+    '''
+    params: list of ints, your 'hand'
+    return: 
+    '''
+    allRuns = getAllRuns(hand)
+    allSets = getAllSets(hand)
+    for phase in phases:
+        print(phase, checkPhase(phase, allSets, allRuns))
+
+deck = list(range(1,13))*8
 random.shuffle(deck)
 print(sorted(deck[:10]))
-# hand = deck[:10]
-hand = [2,3,4,5,5,5,7,7,7]
-allRuns = getAllRuns(hand)
-allSets = getAllSets(hand)
-checkPhase(7)
-# print('new',allRuns, allSets)
-for phase in phases:
-    print(phase, checkPhase(phase))
+hand = deck[:10]
+checkAllPhases(hand)
+
     
