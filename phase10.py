@@ -51,6 +51,7 @@ def checkPhase(phase, allSets, allRuns):
     hasSet1, hasSet2, hasRun = False, False, False
     set1,set2,run = phases[phase]
     currentSets = copy.deepcopy(allSets)
+    k=[]
     if set1 == 0:
         hasSet1 = True
     else:
@@ -112,10 +113,36 @@ def checkAllPhases(hand):
     for phase in phases:
         print(phase, checkPhase(phase, allSets, allRuns))
 
-deck = list(range(1,13))*8
-random.shuffle(deck)
-print(sorted(deck[:10]))
-hand = deck[:10]
-checkAllPhases(hand)
+
+if __name__ == "__main__":
+    print("Welcome to the Phase 10 PhazeChecker! \n")
+
+
+    validHand = False
+
+    while not validHand:
+        print("Enter your 10 numbers below and see which phases you qualify for. \n\
+        (Enter all ten numbers seperated by spaces)")
+
+        raw_hand = input()
+
+        if all(x.isdigit() for x in raw_hand.split()):
+            validHand = True
+        else:
+            print('Error. Please enter 10 numbers separated by spaces.')
+
+    hand = [int(x) for x in raw_hand.split()]
+
+    checkAllPhases(hand)
+
+
+
+
+# deck = list(range(1,13))*8
+# random.shuffle(deck)
+# print(sorted(deck[:10]))
+# hand = deck[:10]
+# checkAllPhases(hand)
+
 
     
