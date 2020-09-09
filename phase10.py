@@ -1,4 +1,3 @@
-import random
 import copy
 
 
@@ -88,7 +87,7 @@ def checkPhase(phase, allSets, allRuns):
 
 
 # How many cards needed in each of the phases
-# first set, Set 2, Run
+# Set 1, Set 2, Run
 # 0 means it's not needed
 phases = {
     1: [3,3,0],
@@ -103,20 +102,27 @@ phases = {
     10:[5,3,0]
 }
 
+
 def checkAllPhases(hand):
     '''
-    params: list of ints, your 'hand'
-    return: 
+    Takes a list of integers and displays which phases it qualifies for
     '''
     allRuns = getAllRuns(hand)
     allSets = getAllSets(hand)
+
+    qualifiedHand = False
+
     for phase in phases:
-        print(phase, checkPhase(phase, allSets, allRuns))
+        if checkPhase(phase, allSets, allRuns):
+            qualifiedHand = True
+            print(f"You qualify for phase {phase}.")
+
+    if not qualifiedHand:
+        print(f"Sorry, you do not qualify for any phases with a hand of {hand}")
 
 
 if __name__ == "__main__":
     print("Welcome to the Phase 10 PhazeChecker! \n")
-
 
     validHand = False
 
@@ -134,15 +140,3 @@ if __name__ == "__main__":
     hand = [int(x) for x in raw_hand.split()]
 
     checkAllPhases(hand)
-
-
-
-
-# deck = list(range(1,13))*8
-# random.shuffle(deck)
-# print(sorted(deck[:10]))
-# hand = deck[:10]
-# checkAllPhases(hand)
-
-
-    
