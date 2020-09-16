@@ -1,4 +1,4 @@
-import copy
+from copy import deepcopy
 
 
 def getAllSets(hand):
@@ -49,18 +49,20 @@ def checkPhase(phase, allSets, allRuns):
     '''Check if the sets and runs complete the phase'''
     hasSet1, hasSet2, hasRun = False, False, False
     set1,set2,run = phases[phase]
-    currentSets = copy.deepcopy(allSets)
-    k=[]
+    currentSets = deepcopy(allSets)
+    fullSet = [] # List of numbers which are exactly a full set
+
     if set1 == 0:
         hasSet1 = True
     else:
-        k = [s[0] for s in currentSets if len(s)==set1]
+        fullSet = [_set[0] for _set in currentSets if len(_set)==set1]
         for _set in currentSets:
             if len(_set) >= set1:
                 hasSet1 = True
                 for _ in range(set1):
                     _set.pop()
                 break
+
     if set2 == 0:
         hasSet2 = True
     else:
@@ -75,14 +77,15 @@ def checkPhase(phase, allSets, allRuns):
         hasRun = True
     else:
         for _run in getPossRuns(allRuns, run):
-            if k:
-                if len(_run) >= run and not all(s in _run for s in k):
+            if fullSet:
+                if len(_run) >= run and not all(s in _run for s in fullSet):
                     hasRun = True
                     break
             else:
                 if len(_run) >= run:
                     hasRun = True
                     break
+
     return hasSet1 and hasSet2 and hasRun
 
 
@@ -90,8 +93,8 @@ def checkPhase(phase, allSets, allRuns):
 # Set 1, Set 2, Run
 # 0 means it's not needed
 phases = {
-    1: [3,3,0],
-    2: [3,0,4],
+    1: [3,3,0], # 2 sets of 3 are needed and 0 runs
+    2: [3,0,4], # 1 set of 3, no second set, and a run of 4
     3: [4,0,4],
     4: [0,0,7],
     5: [0,0,8],
